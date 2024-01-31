@@ -1,29 +1,20 @@
 
 
 Public Class Class_JsonEstructura
-
     Public Structure ListaValores
         Dim Clave As String
         Dim Valor As String
     End Structure
 
-    Public Valores As New List(Of ListaValores) 'New ListaValores() {}
+    Public Valores As New List(Of ListaValores)
 
     Friend Sub ObtenerElementos(ByRef Texto As String)
 
         Texto = Replace(Texto, """", "")
-
         Dim Elementos() As String = New String() {}
-        'ReDim Valores(Elementos.Length - 1)
-
         Dim PosicionObjetos As UInteger = 0
-
-
         If 1 = CInt(Texto.IndexOf("{")) Then
-
-
             For Indice As UInteger = 0 To Texto.Length - 1
-
                 Dim PrimerDelimitador As UInteger = Texto.IndexOf(":", CInt(PosicionObjetos))
                 If Texto.Chars(PrimerDelimitador + 1) = "{" Then
                     Try
@@ -70,9 +61,6 @@ Public Class Class_JsonEstructura
 
         Else
             Elementos = Split(Texto, ",")
-            'ReDim Valores(Elementos.Length)
-
-
             For Indice As UInteger = 0 To Elementos.Length - 1
 
                 Dim PrimerDelimitador As UInteger = Texto.IndexOf(":", CInt(PosicionObjetos))
@@ -119,11 +107,7 @@ Public Class Class_JsonEstructura
                 End If
 
             Next
-
-
         End If
-
-
     End Sub
 
     Private m_StringValue As String = String.Empty
@@ -143,8 +127,8 @@ Public Class Class_JsonEstructura
     Friend Property BracesOrBrackets As String = String.Empty  ' array=Brackets, Braces=objeto
     Friend Property ContainsHijos As Boolean = False
 
-    Public Property BracketsList As New List(Of Class_JsonEstructura)
-    Public Property BracesList As New List(Of Class_JsonEstructura)
+    Public Property BracketsList As New List(Of Class_JsonEstructuraGithub)
+    Public Property BracesList As New List(Of Class_JsonEstructuraGithub)
 
     Private Sub GetNodes(ByRef Input As String)
         Dim braceCount As Integer = 0
@@ -157,36 +141,28 @@ Public Class Class_JsonEstructura
             If cketsCount > 1 Or braceCount > 1 Then
                 Me.ContainsHijos = True
             End If
-
             If (Input(i) = "{") And ((BracesOrBrackets = "") Or (BracesOrBrackets = "Braces")) Then
-
-
                 braceCount += 1
                 If (BracesOrBrackets = "") Then
                     braceStart = i
                     BracesOrBrackets = "Braces"
                 End If
-
             ElseIf (Input(i) = "[") And ((BracesOrBrackets = "") Or (BracesOrBrackets = "Brackets")) Then
-
-
                 cketsCount += 1
                 If (BracesOrBrackets = "") Then
                     cketsStart = i
                     BracesOrBrackets = "Brackets"
                 End If
-
             ElseIf (Input(i) = "}") And (BracesOrBrackets = "Braces") Then
                 braceCount -= 1
                 If braceCount = 0 Then
-                    Dim node As New Class_JsonEstructura()
+                    Dim node As New Class_JsonEstructuraGithub()
                     Try
                         Dim headerStart As Integer = Input.LastIndexOf(":", 1) + 1
                         Dim headerEnd As Integer = braceStart - 1
                         node.Header = GetHeader(Input.Substring(lastStart + 1, (i - braceStart)).Trim())
                     Catch ex As Exception
-                        ' Manejar el error de manera adecuada, por ejemplo, imprimir un mensaje
-                        Console.WriteLine("Error obteniendo el nombre del nodo: " & ex.Message)
+                        'Console.WriteLine("Error obteniendo el nombre del nodo: " & ex.Message)
                     End Try
                     Dim Texto As String = Input.Substring(braceStart + 1, i - braceStart - 1)
                     node.StringValue = Input.Substring(braceStart + 1, (i - braceStart) - 1)
@@ -201,7 +177,7 @@ Public Class Class_JsonEstructura
             ElseIf (Input(i) = "]") And (BracesOrBrackets = "Brackets") Then
                 cketsCount -= 1
                 If cketsCount = 0 Then
-                    Dim node As New Class_JsonEstructura()
+                    Dim node As New Class_JsonEstructuraGithub()
                     Try
                         node.Header = GetHeader(Mid(Input, lastStart + 1, i - cketsStart - 1))
                     Catch ex As Exception
@@ -215,9 +191,6 @@ Public Class Class_JsonEstructura
                     cketsStart = -1
                     lastStart = i
                 End If
-
-            ElseIf Input(i) = ":" Then
-                'lastColonIndex = i
             End If
         Next
 
@@ -238,7 +211,6 @@ Public Class Class_JsonEstructura
                     PosicinInicio = i
                 End If
                 If Input(i) = ":" Then
-
                     TextoSalida = Input.Substring(PosicinInicio, i - PosicinInicio - 1).ToString
                     TextoSalida = Replace(TextoSalida, ":", "").Trim
                     TextoSalida = Replace(TextoSalida, ",", "").Trim
@@ -253,5 +225,3 @@ Public Class Class_JsonEstructura
     End Function
 
 End Class
-
-
